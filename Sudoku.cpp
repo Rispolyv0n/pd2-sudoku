@@ -29,7 +29,7 @@ void Sudoku::giveQuestion(){
 void Sudoku::setSpace(){
 	int i, j;
 	srand(time(NULL));
-	for(i=0;i<(rand()%6+25);i++){
+	for(i=0;i<(rand()%6+15);i++){
 		j=rand()%81;
 		while(sudoku_ans[j]==0){
 			j=rand()%81;
@@ -132,7 +132,13 @@ void Sudoku::solve(){
 					return;
 				}
 				// check for unique answer
-				if(ansnum==1 && cell==firstblank && sudoku_ans[cell]==firstblankpossi) break;
+				if(ansnum==1 && cell==firstblank && sudoku_ans[cell]==firstblankpossi){
+					printf("%d\n",ansnum);
+					for(i=0;i<SudokuSize;i++){
+						printf("%d%c",temp[i],(i%9==8)?'\n':' ');
+					}
+					return;
+				}
 				prog=cell;
 				cell=prog-2;
 				while(isblank[cell+1]==0){
@@ -165,11 +171,12 @@ void Sudoku::solve(){
 			}
 		}
 	}
-	for(i=0;i<SudokuSize;i++){
-		sudoku_ans[i]=temp[i];
-	}
+	/*
 	printf("%d\n",ansnum);
-	printSudoku();
+	for(i=0;i<SudokuSize;i++){
+		printf("%d%c",temp[i],(i%9==8)?'\n':' ');
+	}
+	*/
 }
 int Sudoku::ifNoAns(){
 	int i, j, k, l;
