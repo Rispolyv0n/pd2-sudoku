@@ -47,13 +47,13 @@ void Sudoku::readIn(){
 }
 void Sudoku::solve(){
 	int cell, i, j, startRow, startCol, startSec, nopossiflag, ansnum=0, prog, firstblank, firstblankpossi, noblank=0;
-	/*
-	///////////////////////////////HERE!!!!
+	
+	// check wrong question
 	if(ifNoAns()==1){
 		printf("%d\n",ansnum);
 		return;
 	}
-	*/
+	
 	vector< vector<int> > possi(SudokuSize,vector<int>(10,1));
 	int temp[SudokuSize];
 			
