@@ -47,10 +47,13 @@ void Sudoku::readIn(){
 }
 void Sudoku::solve(){
 	int cell, i, j, startRow, startCol, startSec, nopossiflag, ansnum=0, prog, firstblank, firstblankpossi;
+	/*
+	///////////////////////////////HERE!!!!
 	if(ifNoAns()==1){
 		printf("%d\n",ansnum);
 		return;
 	}
+	*/
 	vector< vector<int> > possi(SudokuSize,vector<int>(10,1));
 	int temp[SudokuSize];
 			
@@ -120,6 +123,11 @@ void Sudoku::solve(){
 				}
 			}
 			if(nopossiflag==0){
+				// check for no answer
+				if(ansnum==0 && cell==firstblank && sudoku_ans[cell]==firstblankpossi){
+					printf("%d\n",ansnum);
+					return;
+				}
 				// check for unique answer
 				if(ansnum==1 && cell==firstblank && sudoku_ans[cell]==firstblankpossi) break;
 				prog=cell;
