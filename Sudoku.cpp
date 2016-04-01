@@ -2,9 +2,10 @@
 Sudoku::Sudoku(){setAns();}
 void Sudoku::setAns(){
 	int orig_ans[SudokuSize]={7,3,5,1,6,4,9,2,8,4,2,6,9,7,8,3,1,5,1,9,8,5,3,2,6,7,4,2,4,9,3,8,1,7,5,6,3,8,7,2,5,6,1,4,9,5,6,1,7,4,9,8,3,2,8,5,2,6,1,7,4,9,3,9,1,4,8,2,3,5,6,7,6,7,3,4,9,5,2,8,1};
+	int hard_ans[SudokuSize]={0,0,6,0,0,3,0,0,0,0,0,0,8,9,0,0,0,0,4,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,2,0,0,0,1,0,0,0,0,9,0,0,0,0,0,0,6,0,3,0,0,0,0,8,0,0,0,0,1,0,0,0,2,0,0,0,0,0,0,4,5,0,0,0};
 	int i;
 	for(i=0;i<SudokuSize;i++){
-		sudoku_ans[i]=orig_ans[i];
+		sudoku_ans[i]=hard_ans[i];
 	}
 }
 void Sudoku::printSudoku(){
@@ -22,13 +23,13 @@ void Sudoku::giveQuestion(){
 	changeCol(rand()%3,rand()%3);
 	rotate(rand()%101);
 	flip(rand()%2);
-	setSpace();
+	//setSpace();
 	printSudoku();
 }
 void Sudoku::setSpace(){
 	int i, j;
 	srand(time(NULL));
-	for(i=0;i<(rand()%6+15);i++){
+	for(i=0;i<(rand()%6+25);i++){
 		j=rand()%81;
 		while(sudoku_ans[j]==0){
 			j=rand()%81;
