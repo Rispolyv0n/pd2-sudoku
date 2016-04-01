@@ -47,22 +47,19 @@ void Sudoku::readIn(){
 void Sudoku::solve(){
 	int cell, i, j, startRow, startCol, startSec;
 	int prog, firstblank, firstblankpossi, nopossiflag, ansnum=0, noblank=0;
-	
-	// check wrong question
+	//check wrong question
 	if(ifNoAns()==1){
 		printf("%d\n",ansnum);
 		return;
 	}
-	
 	vector< vector<int> > possi(SudokuSize,vector<int>(10,1));
-	int temp[SudokuSize];
-			
+	int temp[SudokuSize];		
 	//ensure the fixed numbers in the sudoku whose possi are marked -1
 	for(i=0;i<SudokuSize;i++){
 		if(sudoku_ans[i]!=0) possi[i][0]=-1;
 		else noblank++;
 	}
-	// no blank???????
+	//check if there is no blank(for transform test)
 	if(noblank==0){
 		printf("1\n");
 		printSudoku();
@@ -75,10 +72,10 @@ void Sudoku::solve(){
 			break;
 		}
 	}
-
-	//for every cell, if it's a blank to fill, then check and fill its possi and select the smallest number as an answer, if no possi then go back to the previous cell and change its value to the next possi of it
+	//for every cell, if it's not a fixed number, then fill the smallest possi as an answer. if no possi then go back to the previous cell and change its value to the next possi of it
 	for(cell=0;cell<SudokuSize;cell++){
 		if(possi[cell][0]>-1){
+			//initialize the possi of the recent cell
 			for(i=1;i<10;i++){
 				possi[cell][i]=1;
 			}
@@ -110,27 +107,13 @@ void Sudoku::solve(){
 			}
 			//put a possible answer in the cell and check if no possible answer can be put in the recent cell then go back to the previous one
 			nopossiflag=0;
-			/*
-			if(sudoku_ans[cell]==0){
-				for(i=1;i<10;i++){
-					if(possi[cell][i]==1){
-						sudoku_ans[cell]=i;
-						//possi[cell][0]=i;
-						nopossiflag=1;
-						break; //to the next cell
-					}
+			for(i=sudoku_ans[cell]+1;i<10;i++){
+				if(possi[cell][i]==1){
+					sudoku_ans[cell]=i;
+					nopossiflag=1;
+					break; // to the next cell
 				}
 			}
-			*/
-			//else{
-				for(i=sudoku_ans[cell]+1;i<10;i++){
-					if(possi[cell][i]==1){
-						sudoku_ans[cell]=i;
-						nopossiflag=1;
-						break; // to the next cell
-					}
-				}
-			//}
 			if(nopossiflag==0){
 				// check for no answer
 				if(ansnum==0 && cell==firstblank && sudoku_ans[cell]==firstblankpossi){
