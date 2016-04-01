@@ -39,14 +39,14 @@ void Sudoku::setSpace(){
 }
 void Sudoku::readIn(){
 	printf("Please enter your sudoku:\n");
-	int a, i;
+	int i;
 	for(i=0;i<SudokuSize;i++){
-		cin >> a;
-		sudoku_ans[i]=a;
+		cin >> sudoku_ans[i];
 	}
 }
 void Sudoku::solve(){
-	int cell, i, j, startRow, startCol, startSec, nopossiflag, ansnum=0, prog, firstblank, firstblankpossi, noblank=0;
+	int cell, i, j, startRow, startCol, startSec;
+	int prog, firstblank, firstblankpossi, nopossiflag, ansnum=0, noblank=0;
 	
 	// check wrong question
 	if(ifNoAns()==1){
@@ -110,25 +110,27 @@ void Sudoku::solve(){
 			}
 			//put a possible answer in the cell and check if no possible answer can be put in the recent cell then go back to the previous one
 			nopossiflag=0;
+			/*
 			if(sudoku_ans[cell]==0){
 				for(i=1;i<10;i++){
 					if(possi[cell][i]==1){
 						sudoku_ans[cell]=i;
 						//possi[cell][0]=i;
 						nopossiflag=1;
-						break;
+						break; //to the next cell
 					}
 				}
 			}
-			else{
+			*/
+			//else{
 				for(i=sudoku_ans[cell]+1;i<10;i++){
 					if(possi[cell][i]==1){
 						sudoku_ans[cell]=i;
 						nopossiflag=1;
-						break;
+						break; // to the next cell
 					}
 				}
-			}
+			//}
 			if(nopossiflag==0){
 				// check for no answer
 				if(ansnum==0 && cell==firstblank && sudoku_ans[cell]==firstblankpossi){
@@ -147,7 +149,7 @@ void Sudoku::solve(){
 				}
 			}
 		}
-		// check for more answer
+		// check for more answer(has found an answer)
 		if(cell==80){
 			ansnum++;
 			if(ansnum>1){
