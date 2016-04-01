@@ -46,7 +46,7 @@ void Sudoku::readIn(){
 	}
 }
 void Sudoku::solve(){
-	int cell, i, j, startRow, startCol, startSec, nopossiflag, ansnum=0, prog, firstblank, firstblankpossi;
+	int cell, i, j, startRow, startCol, startSec, nopossiflag, ansnum=0, prog, firstblank, firstblankpossi, noblank=0;
 	/*
 	///////////////////////////////HERE!!!!
 	if(ifNoAns()==1){
@@ -60,6 +60,13 @@ void Sudoku::solve(){
 	//ensure the fixed numbers in the sudoku whose possi are marked -1
 	for(i=0;i<SudokuSize;i++){
 		if(sudoku_ans[i]!=0) possi[i][0]=-1;
+		else noblank++;
+	}
+	// no blank???????
+	if(noblank==0){
+		printf("1\n");
+		printSudoku();
+		return;
 	}
 	//find the first blank
 	for(i=0;i<SudokuSize;i++){
