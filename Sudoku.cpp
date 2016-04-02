@@ -5,7 +5,7 @@ void Sudoku::setAns(){
 	int hard_ans[SudokuSize]={0,0,6,0,0,3,0,0,0,0,0,0,8,9,0,0,0,0,4,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,2,0,0,0,1,0,0,0,0,9,0,0,0,0,0,0,6,0,3,0,0,0,0,8,0,0,0,0,1,0,0,0,2,0,0,0,0,0,0,4,5,0,0,0};
 	int i;
 	for(i=0;i<SudokuSize;i++){
-		sudoku_ans[i]=orig_ans[i]; //could change to hard
+		sudoku_ans[i]=hard_ans[i]; //could change to hard
 	}
 }
 void Sudoku::printSudoku(){
@@ -23,7 +23,7 @@ void Sudoku::giveQuestion(){
 	changeCol(rand()%3,rand()%3);
 	rotate(rand()%101);
 	flip(rand()%2);
-	setSpace(); //if it's orig_ans then setSpace
+	//setSpace(); //if it's orig_ans then setSpace
 	printSudoku();
 }
 void Sudoku::setSpace(){
@@ -73,6 +73,10 @@ void Sudoku::solve(){
 	if(noblank==0){
 		printf("1\n");
 		printSudoku();
+		return;
+	}
+	else if(noblank>64){
+		printf("2\n");
 		return;
 	}
 
