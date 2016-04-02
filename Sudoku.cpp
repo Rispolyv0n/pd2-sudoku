@@ -5,7 +5,7 @@ void Sudoku::setAns(){
 	int hard_ans[SudokuSize]={0,0,6,0,0,3,0,0,0,0,0,0,8,9,0,0,0,0,4,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,2,0,0,0,1,0,0,0,0,9,0,0,0,0,0,0,6,0,3,0,0,0,0,8,0,0,0,0,1,0,0,0,2,0,0,0,0,0,0,4,5,0,0,0};
 	int i;
 	for(i=0;i<SudokuSize;i++){
-		sudoku_ans[i]=hard_ans[i]; //could change to hard
+		sudoku_ans[i]=hard_ans[i]; //could switch to hard_ans or orig_ans
 	}
 }
 void Sudoku::printSudoku(){
@@ -48,19 +48,14 @@ void Sudoku::readIn(){
 void Sudoku::solve(){
 	int cell, i, j, startRow, startCol, startSec;
 	int prog, firstblank, firstblankpossi, nopossiflag, ansnum=0, noblank=0;
-
 	//check wrong question
 	if(ifNoAns()==1){
 		printf("%d\n",ansnum);
 		return;
 	}
-
-	// tweak:int vectors
-	//vector< vector<int> > possi(SudokuSize,vector<int>(10,1));
 	int temp[SudokuSize];
 	vector<int> possi(RowNum,1);
 	vector<int> isblank(SudokuSize,0);
-
 	//ensure the blank cell in the sudoku whose isblank are marked 1
 	for(i=0;i<SudokuSize;i++){
 		if(sudoku_ans[i]==0){
@@ -68,7 +63,6 @@ void Sudoku::solve(){
 			noblank++;
 		}
 	}
-
 	//check if there is no blank(for transform test)
 	if(noblank==0){
 		printf("1\n");
@@ -79,7 +73,6 @@ void Sudoku::solve(){
 		printf("2\n");
 		return;
 	}
-
 	//find the first blank
 	for(i=0;i<SudokuSize;i++){
 		if(sudoku_ans[i]==0){
@@ -92,7 +85,6 @@ void Sudoku::solve(){
 		if(isblank[cell]==1){
 			//initialize the possi of the recent cell
 			for(i=0;i<RowNum;i++) possi[i]=1;
-
 			//checkRow
 			startRow=cell/9*9;
 			for(i=startRow;i<startRow+RowNum;i++){
@@ -175,12 +167,6 @@ void Sudoku::solve(){
 			}
 		}
 	}
-	/*
-	printf("%d\n",ansnum);
-	for(i=0;i<SudokuSize;i++){
-		printf("%d%c",temp[i],(i%9==8)?'\n':' ');
-	}
-	*/
 }
 int Sudoku::ifNoAns(){
 	int i, j, k, l;
