@@ -124,7 +124,7 @@ void Sudoku::solve(){
 			if(nopossiflag==0){
 				// check for no answer
 				if(ansnum==0 && cell==firstblank && sudoku_ans[cell]==firstblankpossi){
-					printf("here%d, the cell is %d\n",ansnum,cell);
+					printf("%d\n",ansnum);
 					return;
 				}
 				// check for unique answer
