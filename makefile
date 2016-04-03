@@ -5,3 +5,6 @@ all: Sudoku.o giveQuestion.cpp solve.cpp transform.cpp
 
 Sudoku.o: Sudoku.cpp Sudoku.h
 	g++ -c Sudoku.cpp -o Sudoku.o
+
+clear:
+	rm Sudoku.o
