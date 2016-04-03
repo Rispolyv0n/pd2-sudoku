@@ -208,6 +208,7 @@ int Sudoku::ifNoAns(){
 	return 0;
 }
 void Sudoku::changeNum(int a, int b){
+	if(a==b) return;
 	int i;
 	for(i=0;i<SudokuSize;i++){
 		if(sudoku_ans[i]==a)sudoku_ans[i]=b;
@@ -215,6 +216,7 @@ void Sudoku::changeNum(int a, int b){
 	}
 }
 void Sudoku::changeRow(int a, int b){
+	if(a==b) return;
 	int temp[RowNum];
 	int i, j;
 	for(j=0;j<3;j++){
@@ -226,6 +228,7 @@ void Sudoku::changeRow(int a, int b){
 	}
 }
 void Sudoku::changeCol(int a, int b){
+	if(a==b) return;
 	int temp[ColNum];
 	int i, j;
 	for(j=0;j<3;j++){
