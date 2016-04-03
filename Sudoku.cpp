@@ -84,29 +84,6 @@ void Sudoku::solve(){
 	//for every cell, if it's not a fixed number, then fill the smallest possi as an answer. if no possi then go back to the previous cell and change its value to the next possi of it
 	for(cell=0;cell<SudokuSize;cell++){
 		if(isblank[cell]==1){
-			if(cell==firstblank){
-				for(j=0;j<SudokuSize;j++){
-					if(isblank[j]==1){
-						//checkRow
-						startRow=j/9*9;
-						for(i=startRow;i<startRow+RowNum;i++){
-							if(i!=j && sudoku_ans[i]!=0) possi[j][sudoku_ans[i]-1]=-1;
-						}
-						//checkCol
-						startCol=j%9;
-						for(i=startCol;i<SudokuSize;i=i+9){
-							if(i!=j && sudoku_ans[i]!=0) possi[j][sudoku_ans[i]-1]=-1;
-						}
-						//checkSec
-						startSec=(startRow/27*27)+(startCol/3*3);
-						for(i=startSec;i<startSec+3;i++){
-							for(k=i;k<i+ColNum*3;k=k+ColNum){
-								if(k!=j && sudoku_ans[k]!=0) possi[j][sudoku_ans[k]-1]=-1;
-							}
-						}
-					}
-				}
-			}
 			//initialize the possi of the recent cell
 			for(i=0;i<RowNum;i++){
 				if(possi[cell][i]==0) possi[cell][i]=1;
@@ -114,18 +91,18 @@ void Sudoku::solve(){
 			//checkRow
 			startRow=cell/9*9;
 			for(i=startRow;i<startRow+RowNum;i++){
-				if(i!=cell && sudoku_ans[i]!=0 && possi[cell][sudoku_ans[i]-1]==1) possi[cell][sudoku_ans[i]-1]=0;
+				if(i!=cell && sudoku_ans[i]!=0) possi[cell][sudoku_ans[i]-1]=0;
 			}
 			//checkCol
 			startCol=cell%9;
 			for(i=startCol;i<SudokuSize;i=i+9){
-				if(i!=cell && sudoku_ans[i]!=0 && possi[cell][sudoku_ans[i]-1]==1) possi[cell][sudoku_ans[i]-1]=0;
+				if(i!=cell && sudoku_ans[i]!=0) possi[cell][sudoku_ans[i]-1]=0;
 			}
 			//checkSec
 			startSec=(startRow/27*27)+(startCol/3*3);
 			for(i=startSec;i<startSec+3;i++){
 				for(j=i;j<i+ColNum*3;j=j+ColNum){
-					if(j!=cell && sudoku_ans[j]!=0 && possi[cell][sudoku_ans[j]-1]==1) possi[cell][sudoku_ans[j]-1]=0;
+					if(j!=cell && sudoku_ans[j]!=0) possi[cell][sudoku_ans[j]-1]=0;
 				}
 			}
 			//select the largest possi of the first blank
