@@ -1,7 +1,7 @@
 #include"Sudoku.h"
 Sudoku::Sudoku(){setAns();}
 void Sudoku::setAns(){
-	int orig_ans[SudokuSize]={7,3,5,1,6,4,9,2,8,4,2,6,9,7,8,3,1,5,1,9,8,5,3,2,6,7,4,2,4,9,3,8,1,7,5,6,3,8,7,2,5,6,1,4,9,5,6,1,7,4,9,8,3,2,8,5,2,6,1,7,4,9,3,9,1,4,8,2,3,5,6,7,6,7,3,4,9,5,2,8,1};
+	//int orig_ans[SudokuSize]={7,3,5,1,6,4,9,2,8,4,2,6,9,7,8,3,1,5,1,9,8,5,3,2,6,7,4,2,4,9,3,8,1,7,5,6,3,8,7,2,5,6,1,4,9,5,6,1,7,4,9,8,3,2,8,5,2,6,1,7,4,9,3,9,1,4,8,2,3,5,6,7,6,7,3,4,9,5,2,8,1};
 	int hard_ans[SudokuSize]={0,0,6,0,0,3,0,0,0,0,0,0,8,9,0,0,0,0,4,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,2,0,0,0,1,0,0,0,0,9,0,0,0,0,0,0,6,0,3,0,0,0,0,8,0,0,0,0,1,0,0,0,2,0,0,0,0,0,0,4,5,0,0,0};
 	int i;
 	for(i=0;i<SudokuSize;i++){
@@ -46,30 +46,31 @@ void Sudoku::readIn(){
 	}
 }
 void Sudoku::solve(){
-	int cell, i, j, startRow, startCol, startSec;
-	int prog, firstblank, firstblankpossi, nopossiflag, ansnum=0, noblank=0;
+	int cell, i, j, k, startRow, startCol, startSec;
+	int prog, firstblank, firstblankpossi, nopossiflag, ansnum=0, blank=0;
 	//check wrong question
 	if(ifNoAns()==1){
 		printf("%d\n",ansnum);
 		return;
 	}
 	int temp[SudokuSize];
-	vector<int> possi(RowNum,1);
+	vector< vector<int> > possi(SudokuSize,vector<int>(RowNum,1));
+	//vector<int> possi(RowNum,1);
 	vector<int> isblank(SudokuSize,0);
 	//ensure the blank cell in the sudoku whose isblank are marked 1
 	for(i=0;i<SudokuSize;i++){
 		if(sudoku_ans[i]==0){
 			isblank[i]=1;
-			noblank++;
+			blank++;
 		}
 	}
 	//check if there is no blank(for transform test)
-	if(noblank==0){
+	if(blank==0){
 		printf("1\n");
 		printSudoku();
 		return;
 	}
-	else if(noblank>64){
+	else if(blank>64){
 		printf("2\n");
 		return;
 	}
@@ -83,29 +84,54 @@ void Sudoku::solve(){
 	//for every cell, if it's not a fixed number, then fill the smallest possi as an answer. if no possi then go back to the previous cell and change its value to the next possi of it
 	for(cell=0;cell<SudokuSize;cell++){
 		if(isblank[cell]==1){
+			if(cell==firstblank){
+				for(j=0;j<SudokuSize;j++){
+					if(isblank[j]==1){
+						//checkRow
+						startRow=j/9*9;
+						for(i=startRow;i<startRow+RowNum;i++){
+							if(i!=j && sudoku_ans[i]!=0) possi[j][sudoku_ans[i]-1]=-1;
+						}
+						//checkCol
+						startCol=j%9;
+						for(i=startCol;i<SudokuSize;i=i+9){
+							if(i!=j && sudoku_ans[i]!=0) possi[j][sudoku_ans[i]-1]=-1;
+						}
+						//checkSec
+						startSec=(startRow/27*27)+(startCol/3*3);
+						for(i=startSec;i<startSec+3;i++){
+							for(k=i;k<i+ColNum*3;k=k+ColNum){
+								if(k!=j && sudoku_ans[k]!=0) possi[j][sudoku_ans[k]-1]=-1;
+							}
+						}
+					}
+				}
+			}
 			//initialize the possi of the recent cell
-			for(i=0;i<RowNum;i++) possi[i]=1;
+			for(i=0;i<RowNum;i++){
+				if(possi[cell][i]==0) possi[cell][i]=1;
+			}
 			//checkRow
 			startRow=cell/9*9;
 			for(i=startRow;i<startRow+RowNum;i++){
-				if(i!=cell && sudoku_ans[i]!=0) possi[sudoku_ans[i]-1]=0;
+				if(i!=cell && sudoku_ans[i]!=0 && possi[cell][sudoku_ans[i]-1]==1) possi[cell][sudoku_ans[i]-1]=0;
 			}
 			//checkCol
 			startCol=cell%9;
 			for(i=startCol;i<SudokuSize;i=i+9){
-				if(i!=cell && sudoku_ans[i]!=0) possi[sudoku_ans[i]-1]=0;
+				if(i!=cell && sudoku_ans[i]!=0 && possi[cell][sudoku_ans[i]-1]==1) possi[cell][sudoku_ans[i]-1]=0;
 			}
 			//checkSec
 			startSec=(startRow/27*27)+(startCol/3*3);
 			for(i=startSec;i<startSec+3;i++){
 				for(j=i;j<i+ColNum*3;j=j+ColNum){
-					if(j!=cell && sudoku_ans[j]!=0) possi[sudoku_ans[j]-1]=0;
+					if(j!=cell && sudoku_ans[j]!=0 && possi[cell][sudoku_ans[j]-1]==1) possi[cell][sudoku_ans[j]-1]=0;
 				}
 			}
 			//select the largest possi of the first blank
 			if(cell==firstblank){
 				for(i=RowNum-1;i>-1;i--){
-					if(possi[i]==1){
+					if(possi[cell][i]==1){
 						firstblankpossi=i+1;
 						break;
 					}
@@ -114,7 +140,7 @@ void Sudoku::solve(){
 			//fill the smallest possi in the cell and check if no possible answer can be filled
 			nopossiflag=0;
 			for(i=sudoku_ans[cell]+1;i<10;i++){
-				if(possi[i-1]==1){
+				if(possi[cell][i-1]==1){
 					sudoku_ans[cell]=i;
 					nopossiflag=1;
 					break; // to the next cell
@@ -175,20 +201,21 @@ int Sudoku::ifNoAns(){
 	for(i=0;i<RowNum;i++){
 		for(j=i*RowNum;j<i*RowNum+RowNum;j++){
 			if(sudoku_ans[j]!=0) check[sudoku_ans[j]-1]++;
+			if(check[sudoku_ans[j]-1]==2) return 1; //ADDED
 		}
 		for(j=0;j<RowNum;j++){
-			if(check[j]>1) return 1;
-			else check[j]=0;
+			check[j]=0;
 		}
 	}
 	//checkCol
 	for(i=0;i<RowNum;i++){
 		for(j=i;j<SudokuSize;j=j+ColNum){
 			if(sudoku_ans[j]!=0) check[sudoku_ans[j]-1]++;
+			if(check[sudoku_ans[j]-1]==2) return 1;
 		}
 		for(j=0;j<RowNum;j++){
-			if(check[j]>1) return 1;
-			else check[j]=0;
+			//if(check[j]>1) return 1;
+			check[j]=0;
 		}
 	}
 	//checkSec
@@ -197,11 +224,12 @@ int Sudoku::ifNoAns(){
 			for(k=j;k<j+19;k=k+RowNum){
 				for(l=k;l<k+3;l++){
 					if(sudoku_ans[l]!=0) check[sudoku_ans[l]-1]++;
+					if(check[sudoku_ans[l]-1]==2) return 1;
 				}
 			}
 			for(k=0;k<RowNum;k++){
-				if(check[k]>1) return 1;
-				else check[k]=0;
+				//if(check[k]>1) return 1;
+				check[k]=0;
 			}
 		}
 	}
