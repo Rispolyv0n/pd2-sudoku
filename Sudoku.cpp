@@ -54,8 +54,16 @@ void Sudoku::solve(){
 		return;
 	}
 	int temp[SudokuSize];
-	vector<int> possi(RowNum,1);
+	//vector<int> possi(RowNum,1);
+	vector< vector<int> > possi(SudokuSize,vector<int>(SudokuSize,1));
 	vector<int> isblank(SudokuSize,0);
+/*
+	for(i=0;i<SudokuSize;i++){
+		for(j=0;j<RowNum;j++){
+			printf("%d%c",possi[i][j],(j%9==8)?'\n':' ');
+		}
+	}
+*/
 	//ensure the blank cell in the sudoku whose isblank are marked 1
 	for(i=0;i<SudokuSize;i++){
 		if(sudoku_ans[i]==0){
@@ -84,28 +92,34 @@ void Sudoku::solve(){
 	for(cell=0;cell<SudokuSize;cell++){
 		if(isblank[cell]==1){
 			//initialize the possi of the recent cell
-			for(i=0;i<RowNum;i++) possi[i]=1;
+			for(i=0;i<RowNum;i++) possi[cell][i]=1;
+			/*
+			for(i=0;i<RowNum;i++){
+				printf("%d%c",possi[cell][i],(i%9==8)?'\n':' ');
+			}
+			*/
+			//printf("%d ",cell);
 			//checkRow
 			startRow=cell/9*9;
 			for(i=startRow;i<startRow+RowNum;i++){
-				if(i!=cell && sudoku_ans[i]!=0) possi[sudoku_ans[i]-1]=0;
+				if(i!=cell && sudoku_ans[i]!=0) possi[cell][sudoku_ans[i]-1]=0;
 			}
 			//checkCol
 			startCol=cell%9;
 			for(i=startCol;i<SudokuSize;i=i+9){
-				if(i!=cell && sudoku_ans[i]!=0) possi[sudoku_ans[i]-1]=0;
+				if(i!=cell && sudoku_ans[i]!=0) possi[cell][sudoku_ans[i]-1]=0;
 			}
 			//checkSec
 			startSec=(startRow/27*27)+(startCol/3*3);
 			for(i=startSec;i<startSec+3;i++){
 				for(j=i;j<i+ColNum*3;j=j+ColNum){
-					if(j!=cell && sudoku_ans[j]!=0) possi[sudoku_ans[j]-1]=0;
+					if(j!=cell && sudoku_ans[j]!=0) possi[cell][sudoku_ans[j]-1]=0;
 				}
 			}
 			//select the largest possi of the first blank
 			if(cell==firstblank){
 				for(i=RowNum-1;i>-1;i--){
-					if(possi[i]==1){
+					if(possi[cell][i]==1){
 						firstblankpossi=i+1;
 						break;
 					}
@@ -114,7 +128,7 @@ void Sudoku::solve(){
 			//fill the smallest possi in the cell and check if no possible answer can be filled
 			nopossiflag=0;
 			for(i=sudoku_ans[cell]+1;i<10;i++){
-				if(possi[i-1]==1){
+				if(possi[cell][i-1]==1){
 					sudoku_ans[cell]=i;
 					nopossiflag=1;
 					break; // to the next cell
@@ -124,7 +138,7 @@ void Sudoku::solve(){
 			if(nopossiflag==0){
 				// check for no answer
 				if(ansnum==0 && cell==firstblank && sudoku_ans[cell]==firstblankpossi){
-					printf("%d\n",ansnum);
+					printf("here%d, the cell is %d\n",ansnum,cell);
 					return;
 				}
 				// check for unique answer
@@ -175,20 +189,20 @@ int Sudoku::ifNoAns(){
 	for(i=0;i<RowNum;i++){
 		for(j=i*RowNum;j<i*RowNum+RowNum;j++){
 			if(sudoku_ans[j]!=0) check[sudoku_ans[j]-1]++;
+			if(check[sudoku_ans[j]-1]==2) return 1;
 		}
 		for(j=0;j<RowNum;j++){
-			if(check[j]>1) return 1;
-			else check[j]=0;
+			check[j]=0;
 		}
 	}
 	//checkCol
 	for(i=0;i<RowNum;i++){
 		for(j=i;j<SudokuSize;j=j+ColNum){
 			if(sudoku_ans[j]!=0) check[sudoku_ans[j]-1]++;
+			if(check[sudoku_ans[j]-1]==2) return 1;
 		}
 		for(j=0;j<RowNum;j++){
-			if(check[j]>1) return 1;
-			else check[j]=0;
+			check[j]=0;
 		}
 	}
 	//checkSec
@@ -197,17 +211,21 @@ int Sudoku::ifNoAns(){
 			for(k=j;k<j+19;k=k+RowNum){
 				for(l=k;l<k+3;l++){
 					if(sudoku_ans[l]!=0) check[sudoku_ans[l]-1]++;
+					if(check[sudoku_ans[l]-1]==2){
+						printf("check is %d, l is %d\n",check[sudoku_ans[l]-1],l);
+						return 1;
+					}
 				}
 			}
 			for(k=0;k<RowNum;k++){
-				if(check[k]>1) return 1;
-				else check[k]=0;
+				check[k]=0;
 			}
 		}
 	}
 	return 0;
 }
 void Sudoku::changeNum(int a, int b){
+	if(a==b) return;
 	int i;
 	for(i=0;i<SudokuSize;i++){
 		if(sudoku_ans[i]==a)sudoku_ans[i]=b;
@@ -215,6 +233,7 @@ void Sudoku::changeNum(int a, int b){
 	}
 }
 void Sudoku::changeRow(int a, int b){
+	if(a==b) return;
 	int temp[RowNum];
 	int i, j;
 	for(j=0;j<3;j++){
@@ -226,6 +245,7 @@ void Sudoku::changeRow(int a, int b){
 	}
 }
 void Sudoku::changeCol(int a, int b){
+	if(a==b) return;
 	int temp[ColNum];
 	int i, j;
 	for(j=0;j<3;j++){
