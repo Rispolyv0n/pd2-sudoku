@@ -55,7 +55,6 @@ void Sudoku::solve(){
 	}
 	int temp[SudokuSize];
 	vector< vector<int> > possi(SudokuSize,vector<int>(RowNum,1));
-	//vector<int> possi(RowNum,1);
 	vector<int> isblank(SudokuSize,0);
 	//ensure the blank cell in the sudoku whose isblank are marked 1
 	for(i=0;i<SudokuSize;i++){
@@ -191,7 +190,6 @@ int Sudoku::ifNoAns(){
 			if(check[sudoku_ans[j]-1]==2) return 1;
 		}
 		for(j=0;j<RowNum;j++){
-			//if(check[j]>1) return 1;
 			check[j]=0;
 		}
 	}
@@ -205,7 +203,6 @@ int Sudoku::ifNoAns(){
 				}
 			}
 			for(k=0;k<RowNum;k++){
-				//if(check[k]>1) return 1;
 				check[k]=0;
 			}
 		}
