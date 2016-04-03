@@ -1,11 +1,11 @@
 #include"Sudoku.h"
 Sudoku::Sudoku(){setAns();}
 void Sudoku::setAns(){
-	//int orig_ans[SudokuSize]={7,3,5,1,6,4,9,2,8,4,2,6,9,7,8,3,1,5,1,9,8,5,3,2,6,7,4,2,4,9,3,8,1,7,5,6,3,8,7,2,5,6,1,4,9,5,6,1,7,4,9,8,3,2,8,5,2,6,1,7,4,9,3,9,1,4,8,2,3,5,6,7,6,7,3,4,9,5,2,8,1};
+	int orig_ans[SudokuSize]={7,3,5,1,6,4,9,2,8,4,2,6,9,7,8,3,1,5,1,9,8,5,3,2,6,7,4,2,4,9,3,8,1,7,5,6,3,8,7,2,5,6,1,4,9,5,6,1,7,4,9,8,3,2,8,5,2,6,1,7,4,9,3,9,1,4,8,2,3,5,6,7,6,7,3,4,9,5,2,8,1};
 	int hard_ans[SudokuSize]={0,0,6,0,0,3,0,0,0,0,0,0,8,9,0,0,0,0,4,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,0,2,0,0,0,1,0,0,0,0,9,0,0,0,0,0,0,6,0,3,0,0,0,0,8,0,0,0,0,1,0,0,0,2,0,0,0,0,0,0,4,5,0,0,0};
 	int i;
 	for(i=0;i<SudokuSize;i++){
-		sudoku_ans[i]=hard_ans[i]; //could switch to hard_ans or orig_ans
+		sudoku_ans[i]=orig_ans[i]; //could switch to hard_ans or orig_ans
 	}
 }
 void Sudoku::printSudoku(){
@@ -23,7 +23,7 @@ void Sudoku::giveQuestion(){
 	changeCol(rand()%3,rand()%3);
 	rotate(rand()%101);
 	flip(rand()%2);
-	//setSpace(); //if it's orig_ans then setSpace
+	setSpace(); //if it's orig_ans then setSpace
 	printSudoku();
 }
 void Sudoku::setSpace(){
@@ -81,10 +81,70 @@ void Sudoku::solve(){
 		}
 	}
 	//for every cell, if it's not a fixed number, then fill the smallest possi as an answer. if no possi then go back to the previous cell and change its value to the next possi of it
+	int put, filled=0;
 	for(cell=0;cell<SudokuSize;cell++){
 		if(isblank[cell]==1){
-			//initialize the possi of the recent cell
-			for(i=0;i<RowNum;i++) possi[cell][i]=1;
+			//////////MODIFYYYYY
+			filled=0;
+			for(put=sudoku_ans[cell]+1;put<=RowNum;put++){
+				sudoku_ans[cell]=put;
+				if(ifNoAns()==1) continue;
+				else{
+					filled=1;
+					break;
+				}
+			}
+			if(filled==0){
+				// check for no answer
+				if(ansnum==0 && cell==firstblank && sudoku_ans[cell]==RowNum){
+					printf("%d\n",ansnum);
+					return;
+				}
+				// check for unique answer
+				if(ansnum==1 && cell==firstblank && sudoku_ans[cell]==RowNum){
+					printf("%d\n",ansnum);
+					for(i=0;i<SudokuSize;i++){
+						printf("%d%c",temp[i],(i%9==8)?'\n':' ');
+					}
+					return;
+				}
+				prog=cell;
+				cell=prog-2;
+				while(isblank[cell+1]==0){
+					cell--;
+				}
+				for(i=prog;i>cell+1;i--){
+					if(isblank[i]==1) sudoku_ans[i]=0;
+				}
+			}
+			
+		}
+		// check for more answer(has found an answer)
+		if(cell==80){
+			ansnum++;
+			if(ansnum>1){
+				printf("%d\n",ansnum);
+				return;
+			}
+			else if(ansnum==1){
+				for(i=0;i<SudokuSize;i++){
+					temp[i]=sudoku_ans[i];
+				}
+				prog=cell;
+				cell=prog-2;
+				while(isblank[cell+1]==0){
+					cell--;
+				}
+				for(i=prog;i>cell+1;i--){
+					if(isblank[i]==1) sudoku_ans[i]=0;
+				}
+			}
+		}
+	}
+}
+
+
+/*
 			//checkRow
 			startRow=cell/9*9;
 			for(i=startRow;i<startRow+RowNum;i++){
@@ -168,6 +228,8 @@ void Sudoku::solve(){
 		}
 	}
 }
+*/
+//check if there are identical numbers in the same row/col/sec
 int Sudoku::ifNoAns(){
 	int i, j, k, l;
 	vector<int> check(RowNum,0);
