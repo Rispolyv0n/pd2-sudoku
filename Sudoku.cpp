@@ -171,6 +171,10 @@ void Sudoku::solve(){
 int Sudoku::ifNoAns(){
 	int i, j, k, l;
 	vector<int> check(RowNum,0);
+	//add check wrong question
+	for(i=0;i<SudokuSize;i++){
+		if(sudoku_ans[i]<0) return 1;
+	}
 	//checkRow
 	for(i=0;i<RowNum;i++){
 		for(j=i*RowNum;j<i*RowNum+RowNum;j++){
